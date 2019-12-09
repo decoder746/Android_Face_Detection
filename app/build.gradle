@@ -5,11 +5,11 @@ android {
         noCompress "tflite"
         noCompress "lite"
     }
-    compileSdkVersion 27
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.dragosholban.androidfacedetection"
         minSdkVersion 15
-        targetSdkVersion 27
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

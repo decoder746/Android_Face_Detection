@@ -1,12 +1,10 @@
 package com.dragosholban.androidfacedetection;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -29,14 +27,9 @@ import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 
-import org.tensorflow.lite.Interpreter;
-
-import static com.dragosholban.androidfacedetection.Classifier.DIM_IMG_SIZE_Y;
 
 public class VideoFaceDetectionActivity extends AppCompatActivity{
 
