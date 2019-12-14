@@ -190,6 +190,7 @@ public class VideoFaceDetectionActivity extends AppCompatActivity{
         if (mCameraSource != null) {
             try {
                 mPreview.start(mCameraSource, mGraphicOverlay);
+                mPreview.setImageView(imageView3,imageView4,imageView5,imageView6,myFaceDetector);
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 mCameraSource.release();

@@ -188,9 +188,10 @@ public class Classifier {
         Object[] inputs = {inputImage1,inputImage2,inputImage3,inputImage4};
         Map<Integer, Object> map_of_indices_to_outputs = new HashMap<>();
         map_of_indices_to_outputs.put(0,outputArray);
-        Log.i(LOG_TAG,"Classifier inference starts");
+        long startTime = System.currentTimeMillis();
         interpreter.runForMultipleInputsOutputs(inputs, map_of_indices_to_outputs);
-        Log.i(LOG_TAG,"Classifier inference done");
+        long endTime = System.currentTimeMillis();
+        Log.i("ADebugTag", "Value: " + Long.toString(endTime-startTime));
     }
 
     /**

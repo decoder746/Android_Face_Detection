@@ -1,13 +1,25 @@
 package com.dragosholban.androidfacedetection;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
+
+import java.io.ByteArrayOutputStream;
+
+import static com.dragosholban.androidfacedetection.FaceDetectionActivity.rotateImage;
 
 
 class FaceGraphic extends GraphicOverlay.Graphic{
@@ -16,7 +28,11 @@ class FaceGraphic extends GraphicOverlay.Graphic{
     private static final float ID_Y_OFFSET = 50.0f;
     private static final float ID_X_OFFSET = -50.0f;
     private static final float BOX_STROKE_WIDTH = 5.0f;
-
+    public ImageView imageview3;
+    public ImageView imageview4;
+    public ImageView imageview5;
+    public ImageView imageview6;
+    public MyFaceDetector myFaceDetector;
     private static final int COLOR_CHOICES[] = {
             Color.BLUE,
             Color.CYAN,
@@ -37,7 +53,11 @@ class FaceGraphic extends GraphicOverlay.Graphic{
 
     FaceGraphic(GraphicOverlay overlay) {
         super(overlay);
-
+        this.imageview3 = overlay.imageview3;
+        this.imageview4 = overlay.imageview4;
+        this.imageview5 = overlay.imageview5;
+        this.imageview6 = overlay.imageview6;
+        this.myFaceDetector = overlay.myFaceDetector;
         mCurrentColorIndex = (mCurrentColorIndex + 1) % COLOR_CHOICES.length;
         final int selectedColor = COLOR_CHOICES[mCurrentColorIndex];
 
@@ -67,7 +87,21 @@ class FaceGraphic extends GraphicOverlay.Graphic{
         mFace = face;
         postInvalidate();
     }
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
 
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        return resizedBitmap;
+    }
     /**
      * Draws the face annotations for position on the supplied canvas.
      */
@@ -92,7 +126,37 @@ class FaceGraphic extends GraphicOverlay.Graphic{
         float right = x + xOffset;
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
+        //My modification
+        Frame frame = myFaceDetector.getmFrame();
+        if(frame == null){
+            return;
+        }
+        float width = frame.getMetadata().getWidth();
+        float height = frame.getMetadata().getHeight();
+        YuvImage yuvImage = new YuvImage(frame.getGrayscaleImageData().array(), ImageFormat.NV21, (int)width, (int)height, null);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, (int)width, (int)height), 100, byteArrayOutputStream);
+        byte[] jpegArray = byteArrayOutputStream.toByteArray();
+        Bitmap bmp = BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
+        bmp = getResizedBitmap(bmp,(int)scaleX(height),(int)scaleY(width));
+        //Do whatever you want with this cropped Bitmap
+        Log.i("Tag", "Value: " + Float.toString(y-yOffset)+"  " + Float.toString(y+yOffset)+" "+ Float.toString(bmp.getHeight()));
+        Log.i("Tag", "Value: " + Float.toString(x-xOffset)+"  " + Float.toString(x+xOffset)+" "+ Float.toString(bmp.getWidth()));
+        width = scaleX(width);
+        height = scaleY(height);
+        Bitmap faceBitmap = Bitmap.createBitmap(bmp,(int)(x-xOffset > 0 ? (x-xOffset) : 0),(int)(y>yOffset ? (y-yOffset) : 0),(int)((x+xOffset) > height ? height-x+xOffset : (2*xOffset)),(int)(y+yOffset > width ? width-y+yOffset : (2*yOffset)));
+        Log.i("TagF", "Value: " + Float.toString(y-yOffset)+"  " + Float.toString(y+yOffset)+" "+ Float.toString(faceBitmap.getHeight()));
+        Log.i("TagF", "Value: " + Float.toString(x-xOffset)+"  " + Float.toString(x+xOffset)+" "+ Float.toString(faceBitmap.getWidth()));
+        Bitmap rotatedbitmap = rotateImage(faceBitmap,270);
+        imageview3.setImageBitmap(rotatedbitmap);
+        Bitmap lefteyeBitmap = Bitmap.createBitmap(bmp,(int)translateY(face.getPosition().y+3*face.getHeight()/8)-25,(int)translateX(face.getPosition().x+3*face.getWidth()/10)-25,50,50);
+        Bitmap righteyeBitmap = Bitmap.createBitmap(bmp,(int)translateY(face.getPosition().y+5*face.getHeight()/8)-25,(int)translateX(face.getPosition().x+3*face.getWidth()/10)-25,50,50);
 
+        Bitmap rleb = rotateImage(lefteyeBitmap,270);
+        Bitmap rreb = rotateImage(righteyeBitmap,270);
+        imageview4.setImageBitmap(rleb);
+        imageview5.setImageBitmap(rreb);
+        // Uptil here
         // Draws a circle for each face feature detected
         for (Landmark landmark : face.getLandmarks()) {
             Log.i("Found Landmark","landmark.getType()");

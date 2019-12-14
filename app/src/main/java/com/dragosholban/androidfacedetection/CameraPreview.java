@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.CameraSource;
@@ -22,7 +23,11 @@ public class CameraPreview extends ViewGroup {
     private boolean mStartRequested;
     private boolean mSurfaceAvailable;
     private CameraSource mCameraSource;
-
+    public ImageView imageview3;
+    public ImageView imageview4;
+    public ImageView imageview5;
+    public ImageView imageview6;
+    public MyFaceDetector myFaceDetector;
     private GraphicOverlay mOverlay;
 
     public CameraPreview(Context context, AttributeSet attrs) {
@@ -34,6 +39,13 @@ public class CameraPreview extends ViewGroup {
         mSurfaceView = new SurfaceView(context);
         mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         addView(mSurfaceView);
+    }
+    public void setImageView(ImageView i3,ImageView i4,ImageView i5,ImageView i6,MyFaceDetector myFaceDetector){
+        this.imageview3 = i3;
+        this.imageview4 = i4;
+        this.imageview5 = i5;
+        this.imageview6 = i6;
+        this.myFaceDetector = myFaceDetector;
     }
 
     public void start(CameraSource cameraSource) throws IOException {
@@ -78,9 +90,9 @@ public class CameraPreview extends ViewGroup {
                 if (isPortraitMode()) {
                     // Swap width and height sizes when in portrait, since it will be rotated by
                     // 90 degrees
-                    mOverlay.setCameraInfo(min, max, mCameraSource.getCameraFacing());
+                    mOverlay.setCameraInfo(min, max, mCameraSource.getCameraFacing(),imageview3,imageview4,imageview5,imageview6,myFaceDetector);
                 } else {
-                    mOverlay.setCameraInfo(max, min, mCameraSource.getCameraFacing());
+                    mOverlay.setCameraInfo(max, min, mCameraSource.getCameraFacing(),imageview3,imageview4,imageview5,imageview6,myFaceDetector);
                 }
                 mOverlay.clear();
             }
