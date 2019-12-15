@@ -136,7 +136,6 @@ public class VideoFaceDetectionActivity extends AppCompatActivity{
                 .setClassificationType(FaceDetector.FAST_MODE)
                 .build();
         myFaceDetector = new MyFaceDetector(detector);
-        myFaceDetector.setimageview(imageView3,imageView4,imageView5);
         myFaceDetector.setProcessor(
                 new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
                         .build());

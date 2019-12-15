@@ -185,7 +185,7 @@ public class Classifier {
      * Output is an array of probabilities
      */
     private void runInference() {
-        Object[] inputs = {inputImage1,inputImage2,inputImage3,inputImage4};
+        Object[] inputs = {inputImage1,inputImage3,inputImage2,inputImage4};
         Map<Integer, Object> map_of_indices_to_outputs = new HashMap<>();
         map_of_indices_to_outputs.put(0,outputArray);
         long startTime = System.currentTimeMillis();

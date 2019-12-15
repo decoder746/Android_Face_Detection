@@ -182,21 +182,21 @@ class FaceGraphic extends GraphicOverlay.Graphic{
         imageview6.setImageBitmap(compare);
         // Uptil here
         // Draws a circle for each face feature detected
-        for (Landmark landmark : face.getLandmarks()) {
-            Log.i("Found Landmark","landmark.getType()");
-            if(landmark.getType()==Landmark.RIGHT_EYE) {
-                // the preview display of front-facing cameras is flipped horizontally
-                float cx = canvas.getWidth() - scaleX(landmark.getPosition().x);
-                float cy = scaleY(landmark.getPosition().y);
-                canvas.drawCircle(cx, cy, 10, mIdPaint);
-            }
-            if(landmark.getType()==Landmark.LEFT_EYE) {
-                // the preview display of front-facing cameras is flipped horizontally
-                float cx = canvas.getWidth() - scaleX(landmark.getPosition().x);
-                float cy = scaleY(landmark.getPosition().y);
-                canvas.drawCircle(cx, cy, 10, mIdPaint);
-            }
-        }
+//        for (Landmark landmark : face.getLandmarks()) {
+//            Log.i("Found Landmark","landmark.getType()");
+//            if(landmark.getType()==Landmark.RIGHT_EYE) {
+//                // the preview display of front-facing cameras is flipped horizontally
+//                float cx = canvas.getWidth() - scaleX(landmark.getPosition().x);
+//                float cy = scaleY(landmark.getPosition().y);
+//                canvas.drawCircle(cx, cy, 10, mIdPaint);
+//            }
+//            if(landmark.getType()==Landmark.LEFT_EYE) {
+//                // the preview display of front-facing cameras is flipped horizontally
+//                float cx = canvas.getWidth() - scaleX(landmark.getPosition().x);
+//                float cy = scaleY(landmark.getPosition().y);
+//                canvas.drawCircle(cx, cy, 10, mIdPaint);
+//            }
+//        }
     }
 
 }
