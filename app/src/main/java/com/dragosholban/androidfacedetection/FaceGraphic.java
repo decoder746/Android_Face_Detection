@@ -138,24 +138,48 @@ class FaceGraphic extends GraphicOverlay.Graphic{
         yuvImage.compressToJpeg(new Rect(0, 0, (int)width, (int)height), 100, byteArrayOutputStream);
         byte[] jpegArray = byteArrayOutputStream.toByteArray();
         Bitmap bmp = BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
-        bmp = getResizedBitmap(bmp,(int)scaleX(height),(int)scaleY(width));
+        bmp = getResizedBitmap(bmp,(int)scaleX(width),(int)scaleY(height));
+        bmp = rotateImage(bmp,270);
         //Do whatever you want with this cropped Bitmap
         Log.i("Tag", "Value: " + Float.toString(y-yOffset)+"  " + Float.toString(y+yOffset)+" "+ Float.toString(bmp.getHeight()));
         Log.i("Tag", "Value: " + Float.toString(x-xOffset)+"  " + Float.toString(x+xOffset)+" "+ Float.toString(bmp.getWidth()));
         width = scaleX(width);
         height = scaleY(height);
-        Bitmap faceBitmap = Bitmap.createBitmap(bmp,(int)(x-xOffset > 0 ? (x-xOffset) : 0),(int)(y>yOffset ? (y-yOffset) : 0),(int)((x+xOffset) > height ? height-x+xOffset : (2*xOffset)),(int)(y+yOffset > width ? width-y+yOffset : (2*yOffset)));
+        float newx = scaleX(face.getPosition().x + face.getWidth() / 2);
+        Bitmap faceBitmap = Bitmap.createBitmap(bmp,(int)(newx-xOffset > 0 ? (newx-xOffset) : 0),(int)(y>yOffset ? (y-yOffset) : 0),(int)((newx+xOffset) > width ? width-newx+xOffset : (2*xOffset)),(int)(y+yOffset > height ? height-y+yOffset : (2*yOffset)));
         Log.i("TagF", "Value: " + Float.toString(y-yOffset)+"  " + Float.toString(y+yOffset)+" "+ Float.toString(faceBitmap.getHeight()));
         Log.i("TagF", "Value: " + Float.toString(x-xOffset)+"  " + Float.toString(x+xOffset)+" "+ Float.toString(faceBitmap.getWidth()));
-        Bitmap rotatedbitmap = rotateImage(faceBitmap,270);
-        imageview3.setImageBitmap(rotatedbitmap);
-        Bitmap lefteyeBitmap = Bitmap.createBitmap(bmp,(int)translateY(face.getPosition().y+3*face.getHeight()/8)-25,(int)translateX(face.getPosition().x+3*face.getWidth()/10)-25,50,50);
-        Bitmap righteyeBitmap = Bitmap.createBitmap(bmp,(int)translateY(face.getPosition().y+5*face.getHeight()/8)-25,(int)translateX(face.getPosition().x+3*face.getWidth()/10)-25,50,50);
-
-        Bitmap rleb = rotateImage(lefteyeBitmap,270);
-        Bitmap rreb = rotateImage(righteyeBitmap,270);
-        imageview4.setImageBitmap(rleb);
-        imageview5.setImageBitmap(rreb);
+        imageview3.setImageBitmap(faceBitmap);
+        int lex = (int)scaleX(face.getPosition().x+3*face.getWidth()/10 - 25);
+        int ley = (int)translateY(face.getPosition().y+3*face.getHeight()/8 -25);
+        int rex = (int)scaleX(face.getPosition().x+7*face.getWidth()/10 -25);
+        int rey = (int)translateY(face.getPosition().y+3*face.getHeight()/8 -25);
+        float x50 = scaleX(50);
+        float y50 = scaleY(50);
+        Bitmap lefteyeBitmap = Bitmap.createBitmap(bmp,(lex > 0 ? lex : 0),(ley>0 ? ley : 0),(int)(lex+x50 > width ? width-lex : x50),(int)(ley + y50 > height ? height-ley : y50));
+        Bitmap righteyeBitmap = Bitmap.createBitmap(bmp,(rex > 0 ? rex : 0),(rey>0 ? rey : 0),(int)(rex+x50 > width ? width-rex : x50),(int)(rey + y50 > height ? height-rey : y50));
+        imageview4.setImageBitmap(lefteyeBitmap);
+        imageview5.setImageBitmap(righteyeBitmap);
+        int wfm = imageview6.getWidth();
+        int hfm = imageview6.getHeight();
+        float srx = (newx-xOffset > 0 ? (newx-xOffset) : 0)/width;
+        float brx = ((newx+xOffset) > width ? width : (newx+xOffset))/width;
+        float sry = (y-yOffset > 0 ? (y-yOffset) : 0)/height;
+        float bry = ((y+yOffset) > height ? height : (y+yOffset))/height;
+        Bitmap compare = Bitmap.createBitmap(wfm, hfm, Bitmap.Config.ARGB_8888);
+        for(int x1=0;x1<wfm;x1++){
+            for(int y1=0;y1<hfm;y1++){
+                double r1 = (double)x1*1.0/wfm;
+                double r2 = (double)y1*1.0/hfm;
+                if(r1 > srx && r1 < brx && r2 > sry && r2< bry){
+                    compare.setPixel(x1,y1,Color.BLACK);
+                }
+                else{
+                    compare.setPixel(x1,y1,Color.WHITE);
+                }
+            }
+        }
+        imageview6.setImageBitmap(compare);
         // Uptil here
         // Draws a circle for each face feature detected
         for (Landmark landmark : face.getLandmarks()) {
